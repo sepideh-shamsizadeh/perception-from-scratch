@@ -1,0 +1,14 @@
+# Project dependencies for perception-from-scratch
+# Install into the project venv:
+#   python3 -m venv .venv
+#   .venv/bin/python -m pip install -r requirements.txt
+#
+# torch is the CPU build (no NVIDIA GPU on this machine); it is served from
+# the PyTorch CPU wheel index below.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.13.0+cpu
+numpy==2.5.1
+matplotlib==3.11.0
+opencv-python==5.0.0.93
+ipykernel==7.3.0
