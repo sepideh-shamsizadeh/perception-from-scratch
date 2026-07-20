@@ -220,3 +220,4 @@ __marimo__/
 myenv/
 
 03-computer-vision/multi_camera_pedestrian_tracking/Wildtrack_dataset/
+yolo26n.pt

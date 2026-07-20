@@ -8,11 +8,6 @@ Image_dir = BASE / "Image_subsets"
 annotations_dir = BASE / "annotations_positions"
 calibration_dir = BASE / "calibrations"
 
-def get_box(cam_frame):
-    bbox = []
-    if(cam_frame["xmax"] >0):
-        bbox = [cam_frame["xmin"],cam_frame["ymin"], cam_frame["xmax"], cam_frame["ymax"]]
-    return bbox
 
 
 def color_for_person(person_id):
@@ -37,22 +32,41 @@ def get_image(camera_num, image_name):
 
     return image
 
-def read_annotation_file():
-    with open(annotations_dir/"00000000.json", "r", encoding="utf-8") as file:
+
+def get_box(view):
+    box = [
+        view["xmin"],
+        view["ymin"],
+        view["xmax"],
+        view["ymax"],
+    ]
+
+    if min(box) < 0:
+        return None
+
+    if box[2] <= box[0] or box[3] <= box[1]:
+        return None
+
+    return box
+
+
+def read_annotation_file(annotation_path, view_number):
+    with open(annotation_path, "r", encoding="utf-8") as file:
         data = json.load(file)
-    print(len(data))
-    image = get_image(1, "00000000.png")
 
-    for i in range(0, len(data)):
-        id = data[i]["personID"]
-        cam_frame = data[i]["views"][0]
-        
-        boxes= get_box(cam_frame)
-        color = color_for_person(id)
-        image = draw_box(boxes, image, color, id)
+    annotations = []
 
-    cv2.imshow("00000000", image)
-    cv2.waitKey(0)
+    for person in data:
+        view = person["views"][view_number]
+        box = get_box(view)
 
+        if box is None:
+            continue
 
-read_annotation_file()
+        annotations.append({
+            "person_id": person["personID"],
+            "box": box,
+        })
+
+    return annotations
+
