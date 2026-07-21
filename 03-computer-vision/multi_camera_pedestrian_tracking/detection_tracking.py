@@ -16,7 +16,7 @@ def run_detection(model, image_path):
         source=image_path,
         classes=[0],
         conf=0.20,
-        imgsz=640,
+        imgsz=1920,
         device="cpu",
         save=False,
         verbose=False,

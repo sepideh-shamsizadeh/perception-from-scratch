@@ -94,10 +94,10 @@ def match_predictions(
         else:
             false_positives.append(prediction)
 
-        false_negative = [
-            gt
-            for gt_index, gt in enumerate(ground_truth)
-            if gt_index not in matched_ground_truth
-        ]
+    false_negative = [
+        gt
+        for gt_index, gt in enumerate(ground_truth)
+        if gt_index not in matched_ground_truth
+    ]
 
-        return matches, false_positives, false_negative
+    return matches, false_positives, false_negative
