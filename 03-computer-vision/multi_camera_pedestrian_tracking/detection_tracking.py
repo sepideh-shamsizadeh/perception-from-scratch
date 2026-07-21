@@ -117,21 +117,42 @@ def evaluate_frame(
     }
 
 
+def evaluate_all_cameras(
+    model,
+    frame_name,
+    camera_count=7,
+    iou_threshold=0.5,
+):
+    all_metrics = {}
+
+    for view_number in range(camera_count):
+        camera_name = f"C{view_number + 1}"
+
+        metrics = evaluate_frame(
+            model=model,
+            camera_name=camera_name,
+            frame_name=frame_name,
+            view_number=view_number,
+            iou_threshold=iou_threshold,
+        )
+        all_metrics[camera_name] = metrics
+
+        print(f"--- {camera_name} ---")
+        print("Predictions:", metrics["predictions"])
+        print("Ground truth:", metrics["ground_truth"])
+        print("True positives:", metrics["true_positives"])
+        print("False positives:", metrics["false_positives"])
+        print("False negatives:", metrics["false_negatives"])
+        print(f"Precision: {metrics['precision']:.3f}")
+        print(f"Recall: {metrics['recall']:.3f}")
+        print(f"Mean IoU: {metrics['mean_iou']:.3f}")
+
+    return all_metrics
+
+
 model = YOLO("yolo26n.pt")
 
-metrics = evaluate_frame(
+evaluate_all_cameras(
     model=model,
-    camera_name="C1",
     frame_name="00000000",
-    view_number=0,
-    iou_threshold=0.5,
 )
-
-print("Predictions:", metrics["predictions"])
-print("Ground truth:", metrics["ground_truth"])
-print("True positives:", metrics["true_positives"])
-print("False positives:", metrics["false_positives"])
-print("False negatives:", metrics["false_negatives"])
-print(f"Precision: {metrics['precision']:.3f}")
-print(f"Recall: {metrics['recall']:.3f}")
-print(f"Mean IoU: {metrics['mean_iou']:.3f}")
