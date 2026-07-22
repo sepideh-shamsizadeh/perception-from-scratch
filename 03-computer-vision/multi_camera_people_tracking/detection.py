@@ -472,6 +472,50 @@ def summarize_all_cameras(all_metrics):
         "mean_model_inference_ms": mean_model_inference_ms,
     }
 
+def run_detection_on_frame(model, frame):
+    """
+    Run detection on an already-decoded OpenCV BGR frame.
+
+    Returns:
+        predictions: detected person boxes
+        processing_time: end-to-end model.predict latency in seconds
+        model_speed: Ultralytics timing dictionary in milliseconds
+    """
+    if frame is None:
+        raise ValueError("Input frame is None.")
+
+    synchronize_device()
+    start_time = time.perf_counter()
+
+    results = model.predict(
+        source=frame,
+        classes=[0],
+        conf=CONFIDENCE_THRESHOLD,
+        imgsz=IMAGE_SIZE,
+        device=DEVICE,
+        save=False,
+        verbose=False,
+    )
+
+    synchronize_device()
+    processing_time = time.perf_counter() - start_time
+
+    result = results[0]
+
+    boxes = result.boxes.xyxy.cpu().numpy()
+    confidences = result.boxes.conf.cpu().numpy()
+
+    predictions = [
+        {
+            "box": box.tolist(),
+            "confidence": float(confidence),
+        }
+        for box, confidence in zip(boxes, confidences)
+    ]
+
+    return predictions, processing_time, result.speed
+
+
 if __name__ == "__main__":
     print("Project directory:", PROJECT_DIR)
     print("Dataset directory:", BASE)
@@ -509,11 +553,11 @@ if __name__ == "__main__":
 
 
     all_metrics = evaluate_all_cameras(
-    model=model,
-    frame_name=frame_name,
-    camera_count=7,
-    iou_threshold=0.5,
-    save_visualizations=True,
-)
+        model=model,
+        frame_name=frame_name,
+        camera_count=7,
+        iou_threshold=0.5,
+        save_visualizations=True,
+    )
 
-summary = summarize_all_cameras(all_metrics)
+    summary = summarize_all_cameras(all_metrics)
