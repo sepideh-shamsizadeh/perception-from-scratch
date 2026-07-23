@@ -222,5 +222,6 @@ myenv/
 03-computer-vision/multi_camera_people_tracking/Wildtrack_dataset/
 yolo26n.pt
 03-computer-vision/multi_camera_people_tracking/eval_output/
+03-computer-vision/multi_camera_people_tracking/tracking_output/
 03-computer-vision/multi_camera_people_tracking/wildtrack_calibration/images/
 03-computer-vision/multi_camera_people_tracking/wildtrack_calibration/
